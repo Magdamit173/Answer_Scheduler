@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Answer Scheduler</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: lavender;
+    }
+    #decodedOutput {
+      margin-top: 10px;
+      white-space: pre;
+    }
+  </style>
+</head>
+<body>
+  <h1>Answer Scheduler</h1>
+  <div id="decodedOutput"></div>
+
+  <script>
+
+    // Function to decode base64 string
+    function decodeBase64(base64String) {
+      try {
+        return atob(base64String)
+      } catch (error) {
+        return 'Error decoding base64 string: ' + error.message
+      }
+    }
+
+    // Get the base64 string and date from the URL search parameters
+    const urlParams = new URLSearchParams(window.location.search)
+    const base64Input = urlParams.get('data')
+    const dateOpen = urlParams.get('date')
+
+    let year, month, day
+
+    // Check if the dateOpen parameter exists and is in a valid format
+    if (dateOpen) {
+      const specificDate = new Date(dateOpen)
+
+      // Check if the Date object is valid
+      if (!isNaN(specificDate.getTime())) {
+        // Get the year, month, and day from the specific date
+        year = specificDate.getFullYear()
+        month = specificDate.getMonth() + 1 // Month is zero-based, so we add 1
+        day = specificDate.getDate()
+      } else {
+        // Handle invalid date format
+        console.error('Invalid date format')
+      }
+    } else {
+      // Handle missing dateOpen parameter
+      console.error('Date parameter missing')
+    }
+
+    // Check if the current date matches the specified date
+    const currentDate = new Date()
+    const currentYear = currentDate.getFullYear()
+    const currentMonth = currentDate.getMonth() + 1
+    const currentDay = currentDate.getDate()
+
+    if (year === currentYear && month === currentMonth && day === currentDay) {
+      // Decode the base64 string and display the result
+      const decodedOutput = document.getElementById('decodedOutput')
+      if (base64Input) {
+        const decodedString = decodeBase64(base64Input)
+        decodedOutput.textContent = decodedString
+      } else {
+        decodedOutput.textContent = 'No base64 string found in URL parameters.'
+      }
+    } else {
+      // Display message if the current date does not match the specified date
+      document.getElementById('decodedOutput').textContent = 'This content is scheduled to be revealed on ' + month + '/' + day + '/' + year
+    }
+  </script>
+</body>
+</html>
